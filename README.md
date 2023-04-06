@@ -8,9 +8,11 @@ Simply clone and build the project:
 * ```cmake ..```
 * ```make```
 
-### Note
-To generate a Makefile using cmake the packages bison and re2c need
+### Notes
+* To generate a Makefile using cmake the packages bison and re2c need
 to be installed, otherwise the clingo library cannot be compiled
+* The directory ```data``` contains some example knowledge bases in the correct input format
+* The directory ```declare_data``` contains the same knowledge bases as ```data```, but in Declare format. 
 
 ### Usage
 ```./im_app <path_to_file> <im> <m>```
