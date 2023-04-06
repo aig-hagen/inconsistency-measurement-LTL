@@ -1,9 +1,21 @@
 # ASP-Based Implementations for Inconsistency Measurement in LTL
 ### Setup
 Simply clone and build the project:
-<br> ```cmake CMakeLists.txt```
-<br> ```make```
+* ```git clone git@github.com:aig-hagen/inconsistency-measurement-LTL.git``` 
+* ```cd inconsistency-measurement-LTL```
+* ```mkdir build```
+* ```cd build```
+* ```cmake ..```
+* ```make```
 
-
-### To generate a Makefile using cmake the packages bison and re2c need
+### Note
+To generate a Makefile using cmake the packages bison and re2c need
 to be installed, otherwise the clingo library cannot be compiled
+
+### Usage
+```./im_app <path_to_file> <im> <m>```
+* ```<path_to_file>```: path to knowledge base
+* ```<im>```: inconsistency measure (```contension-ltl``` or ```drastic-ltl```)
+* ```<m>```: number of final state
+
+Example: ```./im_app ../data/bpi_2012_75_12-5_12-5LTL.txt contension-ltl 5```
