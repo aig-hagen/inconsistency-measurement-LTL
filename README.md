@@ -1,4 +1,4 @@
-# InconsistencyMeasureAlgorithms
+# ASP-Based Implementations for Inconsistency Measurement in LTL
 ### Setup
 Simply clone and build the project:
 <br> ```cmake CMakeLists.txt```
