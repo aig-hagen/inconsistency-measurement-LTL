@@ -298,7 +298,7 @@ int contension_measure_LTL(Kb& kb, int m){
         program += "#minimize{X:" + SUM_B + "(X)}.";
 
         // let Clingo solve the problem; retrieve optimum:
-        int opt = compute_optimum(program);
+        int opt = compute_optimum_with_inf(program);
         return opt;
     }
 
@@ -330,7 +330,7 @@ int drastic_measure_LTL(Kb& kb, int m){
         program += "#minimize{1,S:" + AFFECTED_STATE + "(S)}.";
 
         // let Clingo solve the problem; retrieve optimum:
-        int opt = compute_optimum(program);
+        int opt = compute_optimum_with_inf(program);
         return opt;
     }
 
