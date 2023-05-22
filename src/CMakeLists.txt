@@ -10,6 +10,8 @@ target_sources(im_app
       	Utils.h
 		InconsistencyMeasureASP.h
 		InconsistencyMeasureASP.cpp
+		LTLConformanceChecking.h
+		LTLConformanceChecking.cpp 
 		LTLMeasuresASP.h
 		LTLMeasuresASP.cpp
 		Constants.h

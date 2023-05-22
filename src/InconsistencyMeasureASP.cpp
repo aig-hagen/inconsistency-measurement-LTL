@@ -81,3 +81,28 @@ int compute_optimum_with_inf(std::string& program){
         return min_val;
     }
 }
+
+bool answerSetExists(std::string& program){
+    Clingo::Logger logger = [](Clingo::WarningCode, char const *message) {
+            std::cerr << message << std::endl;
+        };
+    Clingo::StringSpan string_span{"--opt-mode=opt"};
+    Clingo::Control control{string_span, logger, 20};
+    const char * program_char_array = program.c_str();
+
+    control.add("base", {}, program_char_array);
+    control.ground({{"base", {}}});
+
+    // compute models:
+    Clingo::SolveHandle sh = control.solve();
+    Clingo::Model m = sh.model();
+
+    if(m){
+        // std::cout << m << std::endl;
+        return true;
+    }
+    else{
+        return false;
+    }
+    
+}
