@@ -22,5 +22,15 @@ std::string add_globally_rules_2VL();
 std::string add_finally_rules_2VL();
 std::string get_base_program_LTL_conformance_checking(Kb& kb);
 
+std::string add_conjunction_rules_LTL_2VL_new();
+std::string add_disjunction_rules_LTL_2VL_new();
+std::string add_negation_rules_LTL_2VL_new();
+std::string add_next_rules_2VL_new();
+std::string add_until_rules_2VL_new();
+std::string add_globally_rules_2VL_new();
+std::string add_finally_rules_2VL_new();
+std::string get_base_program_LTL_conformance_checking_new(Kb& kb);
+void conformance_checking_new(Kb& kb, std::string path_to_traces);
+
 void conformance_checking(Kb& kb, std::string path_to_traces);
 std::vector<std::string> split_by_comma(std::string& input);

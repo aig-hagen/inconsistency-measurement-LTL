@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
 
         // std::cout << "I'm conformance checking!" << std::endl;
         
-        conformance_checking(k, trace_file);
+        conformance_checking_new(k, trace_file);
     }
     
 

@@ -37,5 +37,7 @@ namespace constants {
     static const std::string SUM_B = "sumB";
     static const std::string AFFECTED_STATE = "as";
 
+    static const std::string IS_TRUE = "true";
+
 }
 #endif

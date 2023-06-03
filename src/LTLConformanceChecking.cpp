@@ -25,6 +25,17 @@ std::string add_conjunction_rules_LTL_2VL(){
     return conjunction_rules;
 }
 
+std::string add_conjunction_rules_LTL_2VL_new(){
+    std::string conjunction_rules = "";
+    // T:
+    conjunction_rules += IS_TRUE + "(Y,S):-" + CONJUNCTION + "(Y)," + IS_STATE + "(S),N{" + IS_TRUE + "(X,S):" + CONJUNCT_OF + "(X,Y)}N," + NUM_CONJUNCTS + "(Y,N).";
+    // F:
+    // conjunction_rules += TRUTH_VALUE_PREDICATE + "(Y,S," + TRUTH_VALUE_F + "):-" + CONJUNCTION + "(Y)," + IS_STATE + "(S),1{" + TRUTH_VALUE_PREDICATE + "(X,S," + TRUTH_VALUE_F + ")}," + CONJUNCT_OF + "(X,Y).";
+    // conjunction_rules += TRUTH_VALUE_PREDICATE + "(Y,S," + TRUTH_VALUE_F + "):-" + CONJUNCTION + "(Y)," + IS_STATE + "(S),not " + TRUTH_VALUE_PREDICATE + "(Y,S," + TRUTH_VALUE_T + ")." ;
+
+    return conjunction_rules;
+}
+
 std::string add_disjunction_rules_LTL_2VL(){
     std::string disjunction_rules = "";
     // T:
@@ -32,6 +43,17 @@ std::string add_disjunction_rules_LTL_2VL(){
     disjunction_rules += TRUTH_VALUE_PREDICATE + "(Y,S," + TRUTH_VALUE_T + "):-" + DISJUNCTION + "(Y)," + IS_STATE + "(S),not " + TRUTH_VALUE_PREDICATE + "(Y,S," + TRUTH_VALUE_F + ")." ;
     // F:
     disjunction_rules += TRUTH_VALUE_PREDICATE + "(Y,S," + TRUTH_VALUE_F + "):-" + DISJUNCTION + "(Y)," + IS_STATE + "(S),N{" + TRUTH_VALUE_PREDICATE + "(X,S," + TRUTH_VALUE_F + "):" + DISJUNCT_OF + "(X,Y)}N," + NUM_DISJUNCTS + "(Y,N).";
+
+    return disjunction_rules;
+}
+
+std::string add_disjunction_rules_LTL_2VL_new(){
+    std::string disjunction_rules = "";
+    // T:
+    // disjunction_rules += TRUTH_VALUE_PREDICATE + "(Y,S," + TRUTH_VALUE_T + "):-" + DISJUNCTION + "(Y)," + IS_STATE + "(S),1{" + TRUTH_VALUE_PREDICATE + "(X,S," + TRUTH_VALUE_T + ")}," + DISJUNCT_OF + "(X,Y).";
+    disjunction_rules += IS_TRUE + "(Y,S):-" + DISJUNCTION + "(Y)," + IS_STATE + "(S),1{" + IS_TRUE + "(X,S):" + DISJUNCT_OF + "(X,Y)}." ;
+    // F:
+    // disjunction_rules += TRUTH_VALUE_PREDICATE + "(Y,S," + TRUTH_VALUE_F + "):-" + DISJUNCTION + "(Y)," + IS_STATE + "(S),N{" + TRUTH_VALUE_PREDICATE + "(X,S," + TRUTH_VALUE_F + "):" + DISJUNCT_OF + "(X,Y)}N," + NUM_DISJUNCTS + "(Y,N).";
 
     return disjunction_rules;
 }
@@ -46,12 +68,31 @@ std::string add_negation_rules_LTL_2VL(){
     return negation_rules;
 }
 
+std::string add_negation_rules_LTL_2VL_new(){
+    std::string negation_rules = "";
+    // T:
+    negation_rules += IS_TRUE + "(Y,S):-" + NEGATION + "(X,Y)," + IS_STATE + "(S),not " + IS_TRUE + "(X,S).";
+    // F:
+    // negation_rules += TRUTH_VALUE_PREDICATE + "(Y,S," + TRUTH_VALUE_F + "):-" + NEGATION + "(X,Y)," + IS_STATE + "(S)," + TRUTH_VALUE_PREDICATE + "(X,S," + TRUTH_VALUE_T + ").";
+
+    return negation_rules;
+}
+
 std::string add_next_rules_2VL(){
     std::string next_rules = "";
     // i < m:
     next_rules += TRUTH_VALUE_PREDICATE + "(F,S1,T):-" + IS_NEXT + "(F,G)," + IS_STATE + "(S1),tv(T),S2=S1+1,S1<M," + FINAL_STATE + "(M)," + TRUTH_VALUE_PREDICATE + "(G,S2,T).";
     // i >= m:
     next_rules += TRUTH_VALUE_PREDICATE + "(F,S," + TRUTH_VALUE_F + "):-" + IS_NEXT + "(F,_)," + IS_STATE + "(S),S>=M," + FINAL_STATE + "(M).";
+    return next_rules;
+}
+
+std::string add_next_rules_2VL_new(){
+    std::string next_rules = "";
+    // i < m:
+    next_rules += IS_TRUE + "(F,S1):-" + IS_NEXT + "(F,G)," + IS_STATE + "(S1),S2=S1+1,S1<M," + FINAL_STATE + "(M)," + IS_TRUE + "(G,S2).";
+    // i >= m:
+    // next_rules += TRUTH_VALUE_PREDICATE + "(F,S," + TRUTH_VALUE_F + "):-" + IS_NEXT + "(F,_)," + IS_STATE + "(S),S>=M," + FINAL_STATE + "(M).";
     return next_rules;
 }
 
@@ -71,6 +112,18 @@ std::string add_until_rules_2VL(){
     return until_rules;
 }
 
+std::string add_until_rules_2VL_new(){
+    std::string until_rules = "";
+    // T: 
+    until_rules += IS_TRUE + "(F,S1):-" + IS_UNTIL + "(F,G,H)," + IS_STATE + "(S1)," + IS_STATE + "(S2),S2>S1,S2<=M," + FINAL_STATE + "(M),X{"
+        + IS_TRUE + "(G,S):" + IS_STATE + "(S),S>=S1,S<S2}X,X=S2-S1," + IS_TRUE + "(H,S2).";
+    // F:
+    // until_rules += TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_F + "):-" + IS_UNTIL + "(F,_,_)," + IS_STATE  + "(S1),not " + TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_T + "),not " + TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_B + ").";
+    // until_rules += TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_F + "):-" + IS_UNTIL + "(F,_,_)," + IS_STATE  + "(S1),not " + TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_T + ").";
+
+    return until_rules;
+}
+
 std::string add_globally_rules_2VL(){
     std::string gobally_rules = "";
     // T:
@@ -80,6 +133,17 @@ std::string add_globally_rules_2VL(){
     gobally_rules += TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_F + "):-" + IS_GLOBALLY + "(F,_)," + IS_STATE + "(S1),not " + TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_T + ").";
     // B:
     // gobally_rules += TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_B + "):-" + IS_GLOBALLY + "(F,_)," + IS_STATE + "(S1),not " + TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_T + "),not " + TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_F + ").";
+
+    return gobally_rules;
+}
+
+std::string add_globally_rules_2VL_new(){
+    std::string gobally_rules = "";
+    // T:
+    gobally_rules += IS_TRUE + "(F,S1):-" + IS_GLOBALLY + "(F,G)," + IS_STATE + "(S1),X{" + IS_TRUE + "(G,S):" + IS_STATE + "(S),S>S1}X," + FINAL_STATE + "(M),X=M-S1.";
+    // F:
+    // gobally_rules += TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_F + "):-" + IS_GLOBALLY + "(F,G)," + IS_STATE + "(S1),1{" + TRUTH_VALUE_PREDICATE + "(G,S," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>S1}.";
+    // gobally_rules += TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_F + "):-" + IS_GLOBALLY + "(F,_)," + IS_STATE + "(S1),not " + TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_T + ").";
 
     return gobally_rules;
 }
@@ -94,6 +158,17 @@ std::string add_finally_rules_2VL(){
     // B:
     // finally_rules += TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_B + "):-" + IS_FINALLY + "(F,_)," + IS_STATE + "(S1),not " + TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_T + "),not " + TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_F + ").";
 
+    return finally_rules;
+}
+
+std::string add_finally_rules_2VL_new(){
+    std::string finally_rules = "";
+    // T:
+    finally_rules += IS_TRUE + "(F,S1):-" + IS_FINALLY + "(F,G)," + IS_STATE + "(S1)," + IS_TRUE + "(G,S2)," + IS_STATE + "(S2),S2>S1.";
+    // F:
+    // finally_rules += TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_F + "):-" + IS_FINALLY + "(F,G)," + IS_STATE + "(S1),X{" + TRUTH_VALUE_PREDICATE + "(G,S," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>S1}X," + FINAL_STATE + "(M),X=M-S1.";
+    // finally_rules += TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_F + "):-" + IS_FINALLY + "(F,_)," + IS_STATE + "(S1),not " + TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_T + ").";
+    
     return finally_rules;
 }
 
@@ -139,6 +214,48 @@ std::string get_base_program_LTL_conformance_checking(Kb& kb){
     return program;
 }
 
+std::string get_base_program_LTL_conformance_checking_new(Kb& kb){
+
+    std::string program = "";
+
+    program += IS_STATE + "(0..X):-" + FINAL_STATE + "(X).";
+
+    // add truth value rules:
+    // program += add_truth_values_LTL_2VL();
+
+    // add integrity constraint:
+    program += ":-not " + IS_TRUE + "(X,0)," + KB_MEMBER + "(X)," + IS_STATE + "(0).";
+
+    // Unique atom evaluation:
+    // program += "1{" + TRUTH_VALUE_PREDICATE + "(A,S,T):tv(T)}1:-" + ATOM + "(A)," + IS_STATE + "(S).";
+
+    // add rule for each atom in the signature:
+    program += add_atom_rules(kb);
+
+    // add rules for each formula:
+    program += handle_formulas_in_kb_LTL(kb);
+
+    // add universal rules for formulas consisting of single atoms:
+    program += IS_TRUE + "(F,S):-" + FORMULA_IS_ATOM + "(F,A)," + IS_STATE + "(S)," + IS_TRUE + "(A,S).";
+
+    if(program.find(CONJUNCTION) != std::string::npos)
+        program += add_conjunction_rules_LTL_2VL_new();
+    if(program.find(DISJUNCTION) != std::string::npos)
+        program += add_disjunction_rules_LTL_2VL_new();
+    if(program.find(NEGATION) != std::string::npos)
+        program += add_negation_rules_LTL_2VL_new();
+    if(program.find(IS_NEXT) != std::string::npos)
+        program += add_next_rules_2VL_new();
+    if(program.find(IS_UNTIL) != std::string::npos)
+        program += add_until_rules_2VL_new();
+    if(program.find(IS_GLOBALLY) != std::string::npos)
+        program += add_globally_rules_2VL_new();
+    if(program.find(IS_FINALLY) != std::string::npos)
+        program += add_finally_rules_2VL_new();
+
+    return program;
+}
+
 void conformance_checking(Kb& kb, std::string path_to_traces){
 
     // initialize program string:
@@ -146,7 +263,7 @@ void conformance_checking(Kb& kb, std::string path_to_traces){
     
     program += get_base_program_LTL_conformance_checking(kb);
     program += TRUTH_VALUE_PREDICATE + "(A,S," + TRUTH_VALUE_F + "):-" + ATOM + "(A)," + IS_STATE + "(S),not " + TRUTH_VALUE_PREDICATE + "(A,S," + TRUTH_VALUE_T + ").";
-    program += TRUTH_VALUE_PREDICATE + "(A,S," + TRUTH_VALUE_T + "):-" + ATOM + "(A)," + IS_STATE + "(S),not " + TRUTH_VALUE_PREDICATE + "(A,S," + TRUTH_VALUE_F + ").";
+    // program += TRUTH_VALUE_PREDICATE + "(A,S," + TRUTH_VALUE_T + "):-" + ATOM + "(A)," + IS_STATE + "(S),not " + TRUTH_VALUE_PREDICATE + "(A,S," + TRUTH_VALUE_F + ").";
 
     // iterate over traces:
     // std::vector<std::string> curr_trace;
@@ -155,7 +272,26 @@ void conformance_checking(Kb& kb, std::string path_to_traces){
     if (file.is_open()) {
         std::string line;
         int count = 1;
+
+        std::map<std::string, bool> cache; 
+
         while (std::getline(file, line)) {
+
+            // if the trace has been cached:
+            if (cache.find(line) != cache.end()){
+                std::cout << "Found duplicate" << std::endl;
+                if (cache.at(line))
+                    std::cout << "sat" << std::endl;
+                else
+                    std::cout << "unsat" << std::endl;
+
+                continue;
+            }
+
+            // if the trace has not been cached yet
+            else {
+                cache.insert({line, false});
+            }
 
             std::vector<std::string> curr_trace = split_by_comma(line);
 
@@ -174,6 +310,78 @@ void conformance_checking(Kb& kb, std::string path_to_traces){
             std::cout << count << ") ";
             if (is_sat){
                 std::cout << "sat" << std::endl;
+                cache.at(line) = true;
+            }
+            else{
+                std::cout << "unsat" << std::endl;
+            }
+            // std::cout << "m = " << std::to_string(trace_length-1) << std::endl;
+
+            count++;
+
+            // TODO: print nicer output
+
+        }
+    file.close();
+    }
+}
+
+
+void conformance_checking_new(Kb& kb, std::string path_to_traces){
+
+    // initialize program string:
+    std::string program = "";
+    
+    program += get_base_program_LTL_conformance_checking_new(kb);
+    // program += TRUTH_VALUE_PREDICATE + "(A,S," + TRUTH_VALUE_F + "):-" + ATOM + "(A)," + IS_STATE + "(S),not " + TRUTH_VALUE_PREDICATE + "(A,S," + TRUTH_VALUE_T + ").";
+
+    // iterate over traces:
+    // std::vector<std::string> curr_trace;
+    int count = 0;
+    std::ifstream file(path_to_traces);
+    if (file.is_open()) {
+        std::string line;
+        int count = 1;
+
+        std::map<std::string, bool> cache; 
+
+        while (std::getline(file, line)) {
+
+            // if the trace has been cached:
+            if (cache.find(line) != cache.end()){
+                std::cout << "Found duplicate" << std::endl;
+                if (cache.at(line))
+                    std::cout << "sat" << std::endl;
+                else
+                    std::cout << "unsat" << std::endl;
+
+                continue;
+            }
+
+            // if the trace has not been cached yet
+            else {
+                cache.insert({line, false});
+            }
+
+            std::vector<std::string> curr_trace = split_by_comma(line);
+
+            // get trace length
+            int trace_length = curr_trace.size();
+
+            std::string curr_program = program;
+            // set number of states:
+            curr_program += FINAL_STATE + "(" + std::to_string(trace_length-1) + ").";
+
+            for (int i = 0; i < curr_trace.size(); i++){
+                // curr_program += TRUTH_VALUE_PREDICATE + "(" + curr_trace.at(i) + "," + std::to_string(i) + "," + TRUTH_VALUE_T + ").";
+                curr_program += IS_TRUE + "(" + curr_trace.at(i) + "," + std::to_string(i) + ").";
+            }
+
+            bool is_sat = answerSetExists(curr_program);         
+            std::cout << count << ") ";
+            if (is_sat){
+                std::cout << "sat" << std::endl;
+                cache.at(line) = true;
             }
             else{
                 std::cout << "unsat" << std::endl;
