@@ -8,6 +8,7 @@
 
 #include "src/InconsistencyMeasureASP.h"
 #include "src/LTLConformanceChecking.h"
+#include "LTLSatisfiabilityCheck.h"
 #include "src/Parser.h"
 #include "src/Utils.h"
 
@@ -17,6 +18,7 @@ static void PrintCmdHelp()
 {
     std::cerr << "Call im-app with the following arguments for inconsistency measurement: ./im-app im <kb_file> <im> <m>" << std::endl
               << "Call im-app with the following arguments for conformance checking: ./im-app cc <kb_file> <trace_file>" << std::endl
+              << "Call im-app with the following arguments for satisfiability checking: ./im-app sat <kb_file> <m>" << std::endl
               << "'kb_file' is a path to a knowledge base file" << std::endl
               << "'trace_file' is a path to a file containing traces corresponding to the given knowledge base" << std::endl
               << "'im' is the name of an inconsistency measure" << std::endl
@@ -33,7 +35,7 @@ int main(int argc, char *argv[])
     }
     std::string task = argv[1];
     std::transform(task.begin(), task.end(), task.begin(), ::tolower);
-    std::set<std::string> tasks = {"im", "cc"};
+    std::set<std::string> tasks = {"im", "cc", "sat"};
     if (tasks.find(task) == tasks.end())
     {
         std::cerr << "Error: " << task << " is not a valid mode" << std::endl;
@@ -97,7 +99,25 @@ int main(int argc, char *argv[])
 
         // std::cout << "I'm conformance checking!" << std::endl;
         
-        conformance_checking_new(k, trace_file);
+        // conformance_checking_new2(k, trace_file);
+        conformance_checking_single_constraints(k, trace_file);
+    }
+
+    else if (task == "sat"){
+
+        std::string kb_file = argv[2];
+        Parser p = Parser();
+        Kb k = p.ParseKbFromFile(kb_file);
+
+        std::string m_str = argv[3];
+        if (!is_number(m_str))
+        {
+            std::cerr << "Error: " << m_str << " is not a digit" << std::endl;
+            return -1;
+        }
+        int m = stoi(m_str);
+
+        check_satisfiability_LTL(k, m);
     }
     
 
