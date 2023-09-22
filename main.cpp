@@ -38,11 +38,6 @@ int main(int argc, char *argv[])
     }
 
     std::string m_str = argv[3];
-    if (!is_number(m_str))
-    {
-        std::cerr << "Error: " << m_str << " is not a digit" << std::endl;
-        return -1;
-    }
 
     std::string file = argv[1];
     Parser p = Parser();
@@ -53,8 +48,27 @@ int main(int argc, char *argv[])
 
     double result {};
 
-    int m = stoi(m_str);
-    config.m = m;
+    if (m_str.compare("auto") == 0){
+        if (measure.compare("drastic-ltl") != 0){
+            std::cerr << "Error: 'auto' mode only available for drastic-ltl" << std::endl;
+            return -1;
+        }
+        else{
+            config.m = -1;
+        }
+    }
+
+    else{
+        if (!is_number(m_str))
+        {
+            std::cerr << "Error: " << m_str << " is not a digit" << std::endl;
+            return -1;
+        }
+        else{
+            int m = stoi(m_str);
+            config.m = m;
+        }
+    }
 
     result = get_inconsistency_value(k, config);
 
@@ -62,6 +76,11 @@ int main(int argc, char *argv[])
     if (result == -1)
     {
       result_string = "INF";
+    }
+
+    else if(result == -2)
+    {
+        result_string = "m";
     }
 
     

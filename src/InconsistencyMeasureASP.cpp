@@ -13,7 +13,10 @@ double get_inconsistency_value(Kb& k, ImSettings config)
     }
     else if (config.measure_name == "drastic-ltl")
     {
-        return drastic_measure_LTL(k,config.m);
+        if (config.m < 0)
+            return drastic_measure_LTL_auto_m(k);
+        else
+            return drastic_measure_LTL(k,config.m);
     }
     else
     {

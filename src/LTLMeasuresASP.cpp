@@ -38,6 +38,56 @@ std::string handle_formulas_in_kb_LTL(Kb& kb){
     return formula_rules;
 }
 
+// std::string handle_formulas_in_kb_LTL_auto_m(Kb& kb, int& kb_depth){
+//     std::vector<Formula> formulas = kb.GetFormulas();
+//     std::string formula_rules = "";
+//     int max_depth = 0;
+//     int initial_depth = 0;
+//     for (int i = 0; i < formulas.size(); i++){
+//         std::string formula_name = FORMULA_PREFIX + std::to_string(i);
+//         std::string kb_member_rule = KB_MEMBER + "(" + formula_name + ").";
+//         formula_rules += kb_member_rule;
+
+//         std::string curr_formula_rules = "";
+
+//         ltl_to_asp(formulas.at(i), formula_name, curr_formula_rules);
+//         formula_rules += curr_formula_rules;
+
+//         int& formula_depth = initial_depth;
+//         get_formula_depth(formulas.at(i), formula_depth);
+
+//         std::cout << "Current formula depth: " << formula_depth << std::endl;
+
+//         if (formula_depth > max_depth){
+//             max_depth = formula_depth;
+//         }
+//     }
+
+//     kb_depth = max_depth;
+//     std::cout << "\nMax depth (= KB depth): " << kb_depth << std::endl;
+
+//     return formula_rules;
+// }
+
+int get_kb_depth(Kb& kb){
+    std::vector<Formula> formulas = kb.GetFormulas();
+
+    int max_depth = 0;
+    int initial_depth = 0;
+
+    for (int i = 0; i < formulas.size(); i++){
+        int formula_depth = initial_depth;
+        get_formula_depth(formulas.at(i), formula_depth);
+
+        if (formula_depth > max_depth){
+            max_depth = formula_depth;
+        }
+    }
+
+    return max_depth;
+
+}
+
 std::string add_conjunction_rules_LTL(){
     std::string conjunction_rules = "";
     // T:
@@ -229,6 +279,110 @@ void ltl_to_asp(Formula& formula, std::string formula_name, std::string& rules){
     }
 }
 
+void get_formula_depth(Formula& formula, int& formula_depth){
+    if(formula.IsAtom()){
+        return;
+    }
+
+    if(formula.IsNegation()){
+        auto subformulas = formula.GetSubformulas();
+        Formula formula_without_negation = Formula(*(subformulas.begin()));
+        get_formula_depth(formula_without_negation, formula_depth);
+    }
+
+    if(formula.IsConjunction()){
+        std::vector<Formula> conjuncts = formula.GetSubformulas();
+
+        int curr_formula_depth = formula_depth;
+        for(auto conjunct : conjuncts){
+            int tmp_formula_depth = curr_formula_depth;
+            get_formula_depth(conjunct, tmp_formula_depth);
+            if (tmp_formula_depth > curr_formula_depth){
+                formula_depth = tmp_formula_depth;
+            }
+            
+        }
+    }
+
+    if(formula.IsDisjunction()){
+        std::vector<Formula> disjuncts = formula.GetSubformulas();
+
+        int curr_formula_depth = formula_depth;
+        for(auto disjunct : disjuncts){
+            int tmp_formula_depth = curr_formula_depth;
+            get_formula_depth(disjunct, tmp_formula_depth);
+            if (tmp_formula_depth > curr_formula_depth){
+                formula_depth = tmp_formula_depth;
+            }
+            
+        }
+    }
+
+    if(formula.IsImplication()){
+        auto subformulas = formula.GetSubformulas();
+        auto i = subformulas.begin();
+        Formula left = *(i++);
+        Formula right = *(i);
+        Formula disj = Formula(Type::OR, Formula(Type::NOT, left), right);
+        get_formula_depth(disj, formula_depth);
+    }
+
+    if(formula.IsEquivalence()){
+        auto subformulas = formula.GetSubformulas();
+        auto i = subformulas.begin();
+        Formula left = *(i++);
+        Formula right = *(i);
+        Formula disj_left = Formula(Type::OR, Formula(Type::NOT, left), right);
+        Formula disj_right = Formula(Type::OR, Formula(Type::NOT, right), left);
+        Formula conj = Formula(Type::AND, disj_left, disj_right);
+        get_formula_depth(conj, formula_depth);
+    }
+
+    if(formula.IsNext()){
+        auto subformulas = formula.GetSubformulas();
+        Formula base_formula = Formula(*(subformulas.begin()));
+        
+        formula_depth += 1;
+        get_formula_depth(base_formula, formula_depth);
+    }
+
+    if(formula.IsUntil()){
+        auto subformulas = formula.GetSubformulas();
+        auto i = subformulas.begin();
+        Formula left = *(i++);
+        Formula right = *(i);
+
+        int tmp_formula_depth_left = formula_depth;
+        int tmp_formula_depth_right = formula_depth;
+        get_formula_depth(left, tmp_formula_depth_left);
+        get_formula_depth(right, tmp_formula_depth_right);
+
+        if (tmp_formula_depth_left >= tmp_formula_depth_right){
+            formula_depth = 1 + tmp_formula_depth_left;
+        }
+        else{
+            formula_depth = 1 + tmp_formula_depth_right;
+        }
+
+    }
+
+    if(formula.IsGlobally()){
+        auto subformulas = formula.GetSubformulas();
+        Formula base_formula = Formula(*(subformulas.begin()));
+
+        formula_depth += 1;
+        get_formula_depth(base_formula, formula_depth);
+    }
+
+    if(formula.IsFinally()){
+        auto subformulas = formula.GetSubformulas();
+        Formula base_formula = Formula(*(subformulas.begin()));
+        
+        formula_depth += 1;
+        get_formula_depth(base_formula, formula_depth);
+    }
+}
+
 std::string get_base_program_LTL(Kb& kb){
 
     std::string program = "";
@@ -248,6 +402,7 @@ std::string get_base_program_LTL(Kb& kb){
     program += add_atom_rules(kb);
 
     // add rules for each formula:
+    // program += handle_formulas_in_kb_LTL(kb);
     program += handle_formulas_in_kb_LTL(kb);
 
     // add universal rules for connectors and formulas consisting of single atoms:
@@ -285,7 +440,7 @@ int contension_measure_LTL(Kb& kb, int m){
         // initialize program string:
         std::string program = "";
 
-        // set number of states:
+        // set final state:
         program += FINAL_STATE + "(" + std::to_string(m) + ").";
 
         program += get_base_program_LTL(kb);
@@ -319,7 +474,7 @@ int drastic_measure_LTL(Kb& kb, int m){
         // initialize program string:
         std::string program = "";
 
-        // set number of states:
+        // set final state:
         program += FINAL_STATE + "(" + std::to_string(m) + ").";
 
         program += get_base_program_LTL(kb);
@@ -332,6 +487,72 @@ int drastic_measure_LTL(Kb& kb, int m){
         // let Clingo solve the problem; retrieve optimum:
         int opt = compute_optimum_with_inf(program);
         return opt;
+    }
+
+    return 0;
+}
+
+int drastic_measure_LTL_auto_m(Kb& kb){
+
+    // Check if KB is empty:
+    if(kb.size() == 0){
+        return 0;
+    }
+
+    else{
+
+        std::vector<Formula> formulas = kb.GetFormulas();
+
+        // initialize program string:
+        std::string program = "";
+
+        // get number of states:
+        int m = get_kb_depth(kb);
+        // set final state:
+        program += FINAL_STATE + "(" + std::to_string(m) + ").";
+
+        program += get_base_program_LTL(kb);
+
+        // compute inconsistency value:
+        program += AFFECTED_STATE + "(S):-" + IS_STATE + "(S)," + TRUTH_VALUE_PREDICATE + "(A,S," + TRUTH_VALUE_B + ")," + ATOM + "(A).";
+        
+        program += "#minimize{1,S:" + AFFECTED_STATE + "(S)}.";
+
+        // let Clingo solve the problem; retrieve optimum:
+        int opt = compute_optimum_with_inf(program);
+
+        // TODO: case 2b
+        if (opt < m){
+            return opt;
+        }
+        else{
+            // initialize program string:
+            std::string new_program = "";
+
+            int new_m = m + 1;
+
+            // set final state:
+            new_program += FINAL_STATE + "(" + std::to_string(new_m) + ").";
+
+            new_program += get_base_program_LTL(kb);
+
+            // compute inconsistency value:
+            new_program += AFFECTED_STATE + "(S):-" + IS_STATE + "(S)," + TRUTH_VALUE_PREDICATE + "(A,S," + TRUTH_VALUE_B + ")," + ATOM + "(A).";
+            
+            new_program += "#minimize{1,S:" + AFFECTED_STATE + "(S)}.";
+
+            // let Clingo solve the problem; retrieve optimum:
+            int new_opt = compute_optimum_with_inf(new_program);
+
+            if (new_opt == new_m){
+                return -2;
+            }
+            else{
+                return new_opt;
+            }
+        }
+
+        // return opt;
     }
 
     return 0;
