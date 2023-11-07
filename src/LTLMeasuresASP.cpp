@@ -11,7 +11,7 @@ std::string add_atom_rules(Kb& kb){
             [](unsigned char c){ return std::tolower(c); });
         std::string atom_rule = ATOM + "(" + atom + ").";
         atom_rules += atom_rule;
-    } 
+    }
     return atom_rules;
 }
 
@@ -135,8 +135,10 @@ std::string add_next_rules(){
 
 std::string add_until_rules(){
     std::string until_rules = "";
-    // T: 
-    until_rules += TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_T + "):-" + IS_UNTIL + "(F,G,H)," + IS_STATE + "(S1)," + IS_STATE + "(S2),S2>S1,S2<=M," + FINAL_STATE + "(M),X{"
+    // T:
+    until_rules += TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_T + "):-" + IS_UNTIL + "(F,G,H)," + IS_STATE + "(S1)," + TRUTH_VALUE_PREDICATE + "(G,S1," + TRUTH_VALUE_T + "),"
+        + TRUTH_VALUE_PREDICATE + "(H,S1," + TRUTH_VALUE_T + ").";
+    until_rules += TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_T + "):-" + IS_UNTIL + "(F,G,H)," + IS_STATE + "(S1)," + IS_STATE + "(S2),S2>S1,S2<=M," +  FINAL_STATE + "(M),X{"
         + TRUTH_VALUE_PREDICATE + "(G,S," + TRUTH_VALUE_T + "):" + IS_STATE + "(S),S>=S1,S<S2}X,X=S2-S1," + TRUTH_VALUE_PREDICATE + "(H,S2," + TRUTH_VALUE_T + ").";
     // B:
     until_rules += TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_B + "):-" + IS_UNTIL + "(F,G,H)," + IS_STATE + "(S1)," + IS_STATE + "(S2),S2>S1,S2<=M," + FINAL_STATE + "(M),X{"
@@ -300,7 +302,7 @@ void get_formula_depth(Formula& formula, int& formula_depth){
             if (tmp_formula_depth > curr_formula_depth){
                 formula_depth = tmp_formula_depth;
             }
-            
+
         }
     }
 
@@ -314,7 +316,7 @@ void get_formula_depth(Formula& formula, int& formula_depth){
             if (tmp_formula_depth > curr_formula_depth){
                 formula_depth = tmp_formula_depth;
             }
-            
+
         }
     }
 
@@ -341,7 +343,7 @@ void get_formula_depth(Formula& formula, int& formula_depth){
     if(formula.IsNext()){
         auto subformulas = formula.GetSubformulas();
         Formula base_formula = Formula(*(subformulas.begin()));
-        
+
         formula_depth += 1;
         get_formula_depth(base_formula, formula_depth);
     }
@@ -377,7 +379,7 @@ void get_formula_depth(Formula& formula, int& formula_depth){
     if(formula.IsFinally()){
         auto subformulas = formula.GetSubformulas();
         Formula base_formula = Formula(*(subformulas.begin()));
-        
+
         formula_depth += 1;
         get_formula_depth(base_formula, formula_depth);
     }
@@ -447,9 +449,9 @@ int contension_measure_LTL(Kb& kb, int m){
 
         // compute inconsistency value:
         program += NUM_B_IN_STATE + "(S,X):-" + IS_STATE + "(S),#count{A:" + TRUTH_VALUE_PREDICATE + "(A,S," + TRUTH_VALUE_B + ")," + ATOM + "(A)}=X.";
-        
+
         program += SUM_B + "(X):-#sum{Y,S:" + NUM_B_IN_STATE + "(S,Y)," + IS_STATE + "(S)}=X.";
-        
+
         program += "#minimize{X:" + SUM_B + "(X)}.";
 
         // let Clingo solve the problem; retrieve optimum:
@@ -481,7 +483,7 @@ int drastic_measure_LTL(Kb& kb, int m){
 
         // compute inconsistency value:
         program += AFFECTED_STATE + "(S):-" + IS_STATE + "(S)," + TRUTH_VALUE_PREDICATE + "(A,S," + TRUTH_VALUE_B + ")," + ATOM + "(A).";
-        
+
         program += "#minimize{1,S:" + AFFECTED_STATE + "(S)}.";
 
         // let Clingo solve the problem; retrieve optimum:
@@ -508,6 +510,7 @@ int drastic_measure_LTL_auto_m(Kb& kb){
 
         // get number of states:
         int m = get_kb_depth(kb);
+        std::cout << "m = " << m << std::endl;
         // set final state:
         program += FINAL_STATE + "(" + std::to_string(m) + ").";
 
@@ -515,7 +518,7 @@ int drastic_measure_LTL_auto_m(Kb& kb){
 
         // compute inconsistency value:
         program += AFFECTED_STATE + "(S):-" + IS_STATE + "(S)," + TRUTH_VALUE_PREDICATE + "(A,S," + TRUTH_VALUE_B + ")," + ATOM + "(A).";
-        
+
         program += "#minimize{1,S:" + AFFECTED_STATE + "(S)}.";
 
         // let Clingo solve the problem; retrieve optimum:
@@ -538,7 +541,7 @@ int drastic_measure_LTL_auto_m(Kb& kb){
 
             // compute inconsistency value:
             new_program += AFFECTED_STATE + "(S):-" + IS_STATE + "(S)," + TRUTH_VALUE_PREDICATE + "(A,S," + TRUTH_VALUE_B + ")," + ATOM + "(A).";
-            
+
             new_program += "#minimize{1,S:" + AFFECTED_STATE + "(S)}.";
 
             // let Clingo solve the problem; retrieve optimum:
