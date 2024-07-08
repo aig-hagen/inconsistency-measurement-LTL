@@ -18,5 +18,6 @@ struct ImSettings
 };
 
 bool is_number(const std::string& s);
+int get_kb_depth(Kb& kb);
 
 #endif /* UTILS_H */

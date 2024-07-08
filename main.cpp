@@ -17,8 +17,8 @@ static void PrintCmdHelp()
     std::cerr << "Call im-app with 3 arguments: ./im-app <file> <im> <m>" << std::endl
               << "'file' is a path to a  knowledge base file" << std::endl
               << "'im' is the name of an inconsistency measure" << std::endl
-              << "'m' is the number of the final state" << std::endl
-              << "possible 'im' values: contension-ltl, drastic-ltl" << std::endl;
+              << "'m' is the number of the final state (or type 'auto' for automatic detection of the knowledge base's maximal depth)" << std::endl
+              << "possible 'im' values: contension-ltl, drastic-ltl, mv-mis, mv-mcs, p-mis, p-mcs, r, mi" << std::endl;
 }
 
 int main(int argc, char *argv[])
@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
     }
     std::string measure = argv[2];
     std::transform(measure.begin(), measure.end(), measure.begin(), ::tolower);
-    std::set<std::string> measures = {"contension-ltl", "drastic-ltl"};
+    std::set<std::string> measures = {"contension-ltl", "drastic-ltl", "mv-mis", "mv-mcs", "p-mis", "p-mcs", "r", "mi"};
     if (measures.find(measure) == measures.end())
     {
         std::cerr << "Error: " << measure << " is not a valid inconsistency measure" << std::endl;
@@ -48,16 +48,18 @@ int main(int argc, char *argv[])
 
     double result {};
 
+    // Parsing parameter m
+    // Check if m is in 'auto' mode
     if (m_str.compare("auto") == 0){
-        if (measure.compare("drastic-ltl") != 0){
-            std::cerr << "Error: 'auto' mode only available for drastic-ltl" << std::endl;
-            return -1;
-        }
-        else{
-            config.m = -1;
-        }
+        //if (measure.compare("contension-ltl") == 0){
+        //    std::cerr << "Error: 'auto' mode not available for contension-ltl" << std::endl;
+        //    return -1;
+        //}
+        //else{
+            config.m = get_kb_depth(k);
+        //}
     }
-
+    // if m is specified manually, it needs to be a number (integer)
     else{
         if (!is_number(m_str))
         {

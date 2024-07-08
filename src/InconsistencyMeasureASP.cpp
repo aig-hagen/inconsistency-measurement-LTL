@@ -1,5 +1,7 @@
 #include "InconsistencyMeasureASP.h"
 #include "LTLMeasuresASP.h"
+#include "MISBasedInconsistencyMeasures.h"
+#include "MCSBasedInconsistencyMeasures.h"
 #include <iostream>
 
 // Author: Isabelle Kuhlmann
@@ -13,10 +15,31 @@ double get_inconsistency_value(Kb& k, ImSettings config)
     }
     else if (config.measure_name == "drastic-ltl")
     {
-        if (config.m < 0)
-            return drastic_measure_LTL_auto_m(k);
-        else
-            return drastic_measure_LTL(k,config.m);
+        //if (config.m < 0)
+        //    return drastic_measure_LTL_auto_m(k);
+        //else
+        return drastic_measure_LTL(k,config.m);
+    }
+    else if (config.measure_name == "mv-mis"){
+        return mv_measure_LTL(k,config.m);
+    }
+
+    else if (config.measure_name == "mv-mcs"){
+        return mv_measure_LTL_MCS(k,config.m);
+    }
+
+    else if (config.measure_name == "p-mis"){
+        return p_measure_LTL(k,config.m);
+    }
+
+    else if (config.measure_name == "p-mcs"){
+        return p_measure_LTL_MCS(k,config.m);
+    }
+    else if (config.measure_name == "r"){
+        return r_measure_LTL(k,config.m);
+    }
+    else if (config.measure_name == "mi"){
+        return mi_measure_LTL(k,config.m);
     }
     else
     {

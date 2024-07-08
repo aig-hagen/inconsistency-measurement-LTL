@@ -8,11 +8,19 @@ target_sources(im_app
     	Parser.h
       	Utils.cpp
       	Utils.h
-		InconsistencyMeasureASP.h
-		InconsistencyMeasureASP.cpp
-		LTLMeasuresASP.h
-		LTLMeasuresASP.cpp
-		Constants.h
+	ComputeMIS.h
+	ComputeMIS.cpp
+	ComputeMCS.h
+	ComputeMCS.cpp
+	InconsistencyMeasureASP.h
+	InconsistencyMeasureASP.cpp
+	LTLMeasuresASP.h
+	LTLMeasuresASP.cpp
+	MISBasedInconsistencyMeasures.h
+	MISBasedInconsistencyMeasures.cpp
+	MCSBasedInconsistencyMeasures.h
+	MCSBasedInconsistencyMeasures.cpp
+	Constants.h
 )
 
 target_include_directories(im_app PUBLIC ${CMAKE_CURRENT_LIST_DIR})
