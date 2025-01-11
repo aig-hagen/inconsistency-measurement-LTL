@@ -210,7 +210,7 @@ std::string add_until_rules1(){
 std::string add_globally_rules1(){
     std::string gobally_rules = "";
     // T:
-    gobally_rules += TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_T + "):-" + IS_GLOBALLY + "(F,G)," + IS_STATE + "(S1),X{" + TRUTH_VALUE_PREDICATE + "(G,S," + TRUTH_VALUE_T + "):" + IS_STATE + "(S),S>=S1}X," + FINAL_STATE + "(M),X=M-S1.";
+    gobally_rules += TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_T + "):-" + IS_GLOBALLY + "(F,G)," + IS_STATE + "(S1),X{" + TRUTH_VALUE_PREDICATE + "(G,S," + TRUTH_VALUE_T + "):" + IS_STATE + "(S),S>=S1}X," + FINAL_STATE + "(M),X=M-S1+1.";
     // F:
     gobally_rules += TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_F + "):-" + IS_GLOBALLY + "(F,G)," + IS_STATE + "(S1),1{" + TRUTH_VALUE_PREDICATE + "(G,S," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>=S1}.";
     // B:
@@ -224,7 +224,7 @@ std::string add_finally_rules1(){
     // T:
     finally_rules += TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_T + "):-" + IS_FINALLY + "(F,G)," + IS_STATE + "(S1)," + TRUTH_VALUE_PREDICATE + "(G,S2," + TRUTH_VALUE_T + ")," + IS_STATE + "(S2),S2>=S1.";
     // F:
-    finally_rules += TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_F + "):-" + IS_FINALLY + "(F,G)," + IS_STATE + "(S1),X{" + TRUTH_VALUE_PREDICATE + "(G,S," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>=S1}X," + FINAL_STATE + "(M),X=M-S1.";
+    finally_rules += TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_F + "):-" + IS_FINALLY + "(F,G)," + IS_STATE + "(S1),X{" + TRUTH_VALUE_PREDICATE + "(G,S," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>=S1}X," + FINAL_STATE + "(M),X=M-S1+1.";
     // B:
     finally_rules += TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_B + "):-" + IS_FINALLY + "(F,_)," + IS_STATE + "(S1),not " + TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_T + "),not " + TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_F + ").";
 
