@@ -109,13 +109,13 @@ std::string add_globally_rules_MCS(){
     // T:
     gobally_rules += TRUTH_VALUE_PREDICATE_CS + "(F,S1," + TRUTH_VALUE_T + "):-" + IS_GLOBALLY + "(F,G)," + IS_STATE + "(S1),X{" + TRUTH_VALUE_PREDICATE_CS + "(G,S," + TRUTH_VALUE_T + "):" + IS_STATE + "(S),S>=S1}X," + FINAL_STATE + "(M),X=M-S1+1.";
     // F:
-    gobally_rules += TRUTH_VALUE_PREDICATE_CS + "(F,S1," + TRUTH_VALUE_F + "):-" + IS_GLOBALLY + "(F,G)," + IS_STATE + "(S1),1{" + TRUTH_VALUE_PREDICATE_CS + "(G,S," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>S1}.";
+    gobally_rules += TRUTH_VALUE_PREDICATE_CS + "(F,S1," + TRUTH_VALUE_F + "):-" + IS_GLOBALLY + "(F,G)," + IS_STATE + "(S1),1{" + TRUTH_VALUE_PREDICATE_CS + "(G,S," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>=S1}.";
 
     // Superset:
     // T:
     gobally_rules += TRUTH_VALUE_PREDICATE_SET + "(F,Su,S1," + TRUTH_VALUE_T + "):-" + IS_GLOBALLY + "(F,G)," + IS_STATE + "(S1),X{" + TRUTH_VALUE_PREDICATE_SET + "(G,Su,S," + TRUTH_VALUE_T + "):" + IS_STATE + "(S),S>=S1}X," + FINAL_STATE + "(M),X=M-S1+1," + IS_SUPERSET + "(Su).";
     // F:
-    gobally_rules += TRUTH_VALUE_PREDICATE_SET + "(F,Su,S1," + TRUTH_VALUE_F + "):-" + IS_GLOBALLY + "(F,G)," + IS_STATE + "(S1),1{" + TRUTH_VALUE_PREDICATE_SET + "(G,Su,S," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>S1}," + IS_SUPERSET + "(Su).";
+    gobally_rules += TRUTH_VALUE_PREDICATE_SET + "(F,Su,S1," + TRUTH_VALUE_F + "):-" + IS_GLOBALLY + "(F,G)," + IS_STATE + "(S1),1{" + TRUTH_VALUE_PREDICATE_SET + "(G,Su,S," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>=S1}," + IS_SUPERSET + "(Su).";
 
     return gobally_rules;
 }
