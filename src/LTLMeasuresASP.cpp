@@ -80,6 +80,24 @@ void ltl_to_asp1(Formula& formula, std::string formula_name, std::string& rules)
         ltl_to_asp1(disj, formula_name, rules);
     }
 
+    if(formula.IsRelease()){
+        auto subformulas = formula.GetSubformulas();
+        auto i = subformulas.begin();
+        Formula left = *(i++);
+        Formula right = *(i);
+        Formula unt = Formula(Type::UNTIL, Formula(Type::NOT, left), Formula(Type::NOT, right));
+        Formula n_unt = Formula(Type::NOT, unt);
+        ltl_to_asp1(n_unt, formula_name, rules);
+    }
+
+    if(formula.IsWeaknext()){
+        auto subformulas = formula.GetSubformulas();
+        Formula base_formula = Formula(*(subformulas.begin()));
+        Formula next = Formula(Type::NEXT, Formula(Type::NOT, base_formula));
+        Formula n_next = Formula(Type::NOT, next);
+        ltl_to_asp1(n_next, formula_name, rules);
+    }
+
     if(formula.IsEquivalence()){
         auto subformulas = formula.GetSubformulas();
         auto i = subformulas.begin();

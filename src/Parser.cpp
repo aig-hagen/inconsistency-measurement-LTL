@@ -85,7 +85,7 @@ Formula Parser::ParseFormula(const std::string &tokens)
         std::string token = std::string(1, ctoken);
         // Case: Token is part of an operator --> concatenate tokens that belong to
         // the same operator
-        if (token == "|" || token == "&" || token == "!" || token == "=" || token == ">" || token == "<" || token == "X" || token == "U" || token == "G" || token == "F")
+        if (token == "|" || token == "&" || token == "!" || token == "=" || token == ">" || token == "<" || token == "X" || token == "U" || token == "G" || token == "F" || token == "N" || token == "R")
         {
             stack_top_is_operator = true;
             if (token == "&" || token == "|")
@@ -110,7 +110,7 @@ Formula Parser::ParseFormula(const std::string &tokens)
                     continue;
                 }
             }
-            else if (token == "=" || token == "<" || token == "X" || token == "U" || token == "G" || token == "F")
+            else if (token == "=" || token == "<" || token == "X" || token == "U" || token == "G" || token == "F" || token == "N" || token == "R")
             {
                 parsing_stack.push(token);
                 continue;
@@ -188,6 +188,32 @@ Formula Parser::ParseFormula(const std::string &tokens)
                         {
                             parsing_stack.pop();
                             s = "<F>";
+                        }
+                    }
+                }
+                else if ((t == "N"))
+                {
+                    parsing_stack.pop();
+                    if (parsing_stack.size() > 0)
+                    {
+                        std::string t2 = parsing_stack.top();
+                        if (t2 == "<")
+                        {
+                            parsing_stack.pop();
+                            s = "<N>";
+                        }
+                    }
+                }
+                else if ((t == "R"))
+                {
+                    parsing_stack.pop();
+                    if (parsing_stack.size() > 0)
+                    {
+                        std::string t2 = parsing_stack.top();
+                        if (t2 == "<")
+                        {
+                            parsing_stack.pop();
+                            s = "<R>";
                         }
                     }
                 }
@@ -275,7 +301,7 @@ Formula Parser::ParseOutput(const std::vector<std::string> &parser_output)
     {
         if (IsOperator(t))
         {
-            if (t == "!" || t == "<X>" || t == "<G>" || t == "<F>")
+            if (t == "!" || t == "<X>" || t == "<G>" || t == "<F>" || t == "<N>")
             {
                 Formula left = temp.top();
                 temp.pop();
@@ -321,14 +347,14 @@ Formula Parser::EvaluateUnaryExpression(const Formula &left, std::string op)
     {
         return Formula(Type::NOT, left);
     }
-    else if (op == "&&")
-    {
-        return Formula(Type::AND, left);
-    }
-    else if (op == "||")
-    {
-        return Formula(Type::OR, left);
-    }
+    // else if (op == "&&")
+    // {
+    //     return Formula(Type::AND, left);
+    // }
+    // else if (op == "||")
+    // {
+    //     return Formula(Type::OR, left);
+    // }
     else if (op == "<X>")
     {
         return Formula(Type::NEXT, left);
@@ -341,6 +367,14 @@ Formula Parser::EvaluateUnaryExpression(const Formula &left, std::string op)
     {
         return Formula(Type::FINALLY, left);
     }
+    else if (op == "<N>")
+    {
+        return Formula(Type::WEAKNEXT, left);
+    }
+    // else if (op == "<R>")
+    // {
+    //     return Formula(Type::RELEASE, left);
+    // }
     else
     {
         std::stringstream msg;
@@ -392,6 +426,10 @@ Formula Parser::EvaluateBinaryExpression(Formula &left, Formula &right, std::str
     else if (op == "<U>")
     {
         return Formula(Type::UNTIL, right, left);
+    }
+    else if (op == "<R>")
+    {
+        return Formula(Type::RELEASE, right, left);
     }
     else
     {

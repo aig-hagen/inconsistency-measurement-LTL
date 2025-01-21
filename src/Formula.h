@@ -22,7 +22,9 @@ enum Type
     NEXT,    // 7    <X>
     UNTIL,   // 8    <U>
     GLOBALLY,  // 9    <G>
-    FINALLY   // 10    <F>
+    FINALLY,   // 10    <F>
+    WEAKNEXT,   // 11    <N>
+    RELEASE   // 12    <R>
 };
 
 // This class represents a formula in tree form.
@@ -181,6 +183,14 @@ class Formula
     {
         return !IsAtom() && (stoi(this->value_) == 10);
     }
+    inline bool IsWeaknext() const
+    {
+        return !IsAtom() && (stoi(this->value_) == 11);
+    }
+    inline bool IsRelease() const
+    {
+        return !IsAtom() && (stoi(this->value_) == 12);
+    }
 
     // Replace the ith occurence of the atom with the given name with the given
     // formula.
@@ -211,7 +221,7 @@ std::string TypeToString(Type op);
 
 template <typename T> size_t hash_combine(std::size_t s, const T &n)
 {
-    s ^= std::hash<T>()(n) + 0x9e3779b9 + (s << 6) + (s >> 2);
+    s ^= std::hash<T>()(n) + 0x9e3779b9 + (s << 12) + (s >> 2);
     return s;
 }
 

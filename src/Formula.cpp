@@ -533,7 +533,7 @@ std::ostream &operator<<(std::ostream &strm, const Formula &a)
         }
     }
 
-    const char *Operators[] = {"FALSE", "TRUE", "!", "&&", "||", "=>", "<=>", "<X>", "<U>", "<G>", "<F>"};
+    const char *Operators[] = {"FALSE", "TRUE", "!", "&&", "||", "=>", "<=>", "<X>", "<U>", "<G>", "<F>", "<N>", "<R>"};
 
     // TODO?
     bool no_parentheses = a.IsNegation() || (a.GetSubformulas().size() == 1);
@@ -579,7 +579,7 @@ Type StringToType(std::string op)
 
 std::string TypeToString(Type op)
 {
-    const std::string TypeArray[] = {"FALSE", "TRUE", "NOT", "AND", "OR", "IMPLIES", "IFF", "NEXT", "UNTIL", "GLOBALLY", "FINALLY"};
+    const std::string TypeArray[] = {"FALSE", "TRUE", "NOT", "AND", "OR", "IMPLIES", "IFF", "NEXT", "UNTIL", "GLOBALLY", "FINALLY", "WEAKNEXT", "RELEASE"};
     return TypeArray[op];
 }
 

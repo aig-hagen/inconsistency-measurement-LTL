@@ -38,7 +38,8 @@ class Parser
         {"=>", {2, Associates::right_to_left}}, {"<=>", {1, Associates::left_to_right}},
         {"!", {5, Associates::left_to_right}}, {"<X>", {6, Associates::left_to_right}},
         {"<U>", {7, Associates::left_to_right}}, {"<G>", {8, Associates::left_to_right}},
-        {"<F>", {9, Associates::left_to_right}},
+        {"<F>", {9, Associates::left_to_right}}, {"<N>", {10, Associates::left_to_right}},
+        {"<R>", {11, Associates::left_to_right}},
     };
 
     // Utility methods used during parsing
