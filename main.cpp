@@ -10,7 +10,7 @@
 #include "src/Parser.h"
 #include "src/Utils.h"
 
-// Authors: Anna Gessler, Isabelle Kuhlmann 
+// Authors: Anna Gessler, Isabelle Kuhlmann
 
 static void PrintCmdHelp()
 {
@@ -56,7 +56,9 @@ int main(int argc, char *argv[])
         //    return -1;
         //}
         //else{
-            config.m = get_kb_depth(k);
+            int depth = get_kb_depth(k);
+            config.m = depth;
+            std::cout << "m = " << depth << std::endl;
         //}
     }
     // if m is specified manually, it needs to be a number (integer)
@@ -85,7 +87,7 @@ int main(int argc, char *argv[])
         result_string = "m";
     }
 
-    
+
     std::cout << result_string << std::endl;
 
     return 0;

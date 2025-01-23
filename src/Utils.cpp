@@ -2,7 +2,7 @@
 
 bool is_number(const std::string& s)
 {
-    return !s.empty() && std::find_if(s.begin(), 
+    return !s.empty() && std::find_if(s.begin(),
         s.end(), [](unsigned char c) { return !std::isdigit(c); }) == s.end();
 }
 
@@ -74,7 +74,35 @@ void get_formula_depth(Formula& formula, int& formula_depth){
         get_formula_depth(base_formula, formula_depth);
     }
 
+    if(formula.IsWeaknext()){
+        auto subformulas = formula.GetSubformulas();
+        Formula base_formula = Formula(*(subformulas.begin()));
+
+        formula_depth += 1;
+        get_formula_depth(base_formula, formula_depth);
+    }
+
     if(formula.IsUntil()){
+        auto subformulas = formula.GetSubformulas();
+        auto i = subformulas.begin();
+        Formula left = *(i++);
+        Formula right = *(i);
+
+        int tmp_formula_depth_left = formula_depth;
+        int tmp_formula_depth_right = formula_depth;
+        get_formula_depth(left, tmp_formula_depth_left);
+        get_formula_depth(right, tmp_formula_depth_right);
+
+        if (tmp_formula_depth_left >= tmp_formula_depth_right){
+            formula_depth = 1 + tmp_formula_depth_left;
+        }
+        else{
+            formula_depth = 1 + tmp_formula_depth_right;
+        }
+
+    }
+
+    if(formula.IsRelease()){
         auto subformulas = formula.GetSubformulas();
         auto i = subformulas.begin();
         Formula left = *(i++);
