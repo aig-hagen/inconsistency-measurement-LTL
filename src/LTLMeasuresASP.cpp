@@ -217,6 +217,9 @@ std::string add_until_rules1(){
         + TRUTH_VALUE_PREDICATE + "(G,S," + TRUTH_VALUE_T + "):" + IS_STATE + "(S),S>=S1,S<S2}X,X=S2-S1," + TRUTH_VALUE_PREDICATE + "(H,S2," + TRUTH_VALUE_T + ").";
     // B:
     // until_rules += TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_B + "):-" + IS_UNTIL + "(F,_,H)," + IS_STATE + "(S1)," + TRUTH_VALUE_PREDICATE + "(H,S1," + TRUTH_VALUE_B + ").";
+    until_rules += TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_B + "):-" + IS_UNTIL + "(F,G,H)," + IS_STATE + "(S1),1{" + TRUTH_VALUE_PREDICATE + "(G,S1," + TRUTH_VALUE_T
+        + ");" + TRUTH_VALUE_PREDICATE + "(G,S1," + TRUTH_VALUE_B + ")}1,1{" + TRUTH_VALUE_PREDICATE + "(H,S1," + TRUTH_VALUE_T + ");" + TRUTH_VALUE_PREDICATE + "(H,S1,"
+        + TRUTH_VALUE_B + ")}1,not " + TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_T + ").";
     until_rules += TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_B + "):-" + IS_UNTIL + "(F,G,H)," + IS_STATE + "(S1)," + IS_STATE + "(S2),S2>S1,S2<=M," + FINAL_STATE + "(M),X{"
         + TRUTH_VALUE_PREDICATE + "(G,S," + TRUTH_VALUE_B + "):" + IS_STATE + "(S),S>=S1,S<S2;" + TRUTH_VALUE_PREDICATE + "(H,S2," + TRUTH_VALUE_B + ");" + TRUTH_VALUE_PREDICATE + "(G,S," + TRUTH_VALUE_T + "):"
         + IS_STATE + "(S),S>=S1,S<S2;" + TRUTH_VALUE_PREDICATE + "(H,S2," + TRUTH_VALUE_T + ")}X,not " + TRUTH_VALUE_PREDICATE + "(F,S1," + TRUTH_VALUE_T + "),X=S2-S1+1.";
@@ -320,6 +323,8 @@ int contension_measure_LTL(Kb& kb, int m){
         program += SUM_B + "(X):-#sum{Y,S:" + NUM_B_IN_STATE + "(S,Y)," + IS_STATE + "(S)}=X.";
 
         program += "#minimize{X:" + SUM_B + "(X)}.";
+
+        // std::cout << program << std::endl;
 
         // let Clingo solve the problem; retrieve optimum:
         int opt = compute_optimum_with_inf(program);
