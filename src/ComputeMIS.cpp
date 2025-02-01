@@ -83,7 +83,11 @@ std::string add_until_rules(){
     until_rules += TRUTH_VALUE_PREDICATE + "(F,S1,I," + TRUTH_VALUE_F + "):-" + IS_UNTIL + "(F,G,H)," + IS_STATE  + "(S1),X{" + TRUTH_VALUE_PREDICATE + "(H,S,I," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>=S1}X," + FINAL_STATE + "(M),X=M-S1+1," + INTERPRETATION + "(I).";
 
     until_rules += TRUTH_VALUE_PREDICATE + "(F,S1,I," + TRUTH_VALUE_F + "):-" + IS_UNTIL + "(F,G,H)," + IS_STATE  + "(S1)," + IS_STATE  + "(S2)," + TRUTH_VALUE_PREDICATE + "(H,S2,I," + TRUTH_VALUE_T + "),S2>S1,S2<=M," + FINAL_STATE + "(M),1{"
-        + TRUTH_VALUE_PREDICATE + "(G,S,I," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>=S1,S<S2}," + INTERPRETATION + "(I).";
+        + TRUTH_VALUE_PREDICATE + "(G,S,I," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>=S1,S<S2}," + INTERPRETATION + "(I),not " + TRUTH_VALUE_PREDICATE + "(H,S3,I," + TRUTH_VALUE_T + "),S3<S2,"
+        + IS_STATE + "(S3).";
+
+    until_rules += TRUTH_VALUE_PREDICATE + "(F,S1,I," + TRUTH_VALUE_F + "):-" + IS_UNTIL + "(F,G,_)," + IS_STATE  + "(S1)," + TRUTH_VALUE_PREDICATE
+        + "(G,S1,I," + TRUTH_VALUE_F + ")," + INTERPRETATION + "(I).";
 
     return until_rules;
 }
@@ -136,7 +140,7 @@ std::string add_SAT_check_rules(){
     sat_rules += ":-" + SUBSET_EQ + "(S1,S2).";
 
     // Define interpretations:
-    sat_rules += INTERPRETATION + "(1..X):-" + NUM_ELEMENTS_IN_CS + "(X),X>1.";
+    sat_rules += INTERPRETATION + "(1..X):-" + NUM_ELEMENTS_IN_CS + "(X),X>=1.";
 
     // Assign each atom exactly one truth value wrt. each interpretation:
     sat_rules += "1{" + TRUTH_VALUE_PREDICATE + "(A,S,I,T):tv(T)}1:-" + ATOM + "(A)," + IS_STATE + "(S)," + INTERPRETATION + "(I),I!=u.";

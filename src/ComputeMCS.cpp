@@ -92,9 +92,6 @@ std::string add_until_rules_MCS(){
     until_rules += TRUTH_VALUE_PREDICATE_CS + "(F,S1," + TRUTH_VALUE_F + "):-" + IS_UNTIL + "(F,_,H)," + IS_STATE  + "(S1),X{" + TRUTH_VALUE_PREDICATE_CS
         + "(H,S," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>=S1,S<=M}X," + FINAL_STATE + "(M),X=M-S1+1.";
 
-    // until_rules += TRUTH_VALUE_PREDICATE_CS + "(F,S1," + TRUTH_VALUE_F + "):-" + IS_UNTIL + "(F,G,H)," + IS_STATE  + "(S1)," + IS_STATE  + "(S2),"
-    //     + TRUTH_VALUE_PREDICATE_CS + "(H,S2," + TRUTH_VALUE_T + "),S2>S1,S2<=M," + FINAL_STATE + "(M),1{"
-    //     + TRUTH_VALUE_PREDICATE_CS + "(G,S," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>=S1,S<S2}.";
     until_rules += TRUTH_VALUE_PREDICATE_CS + "(F,S1," + TRUTH_VALUE_F + "):-" + IS_UNTIL + "(F,G,H)," + IS_STATE  + "(S1)," + IS_STATE  + "(S2),"
         + TRUTH_VALUE_PREDICATE_CS + "(H,S2," + TRUTH_VALUE_T + "),S2>S1,S2<=M," + FINAL_STATE + "(M),1{"
         + TRUTH_VALUE_PREDICATE_CS + "(G,S," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>=S1,S<S2},not " + TRUTH_VALUE_PREDICATE_CS + "(H,S3," + TRUTH_VALUE_T + "),S3<S2,"
