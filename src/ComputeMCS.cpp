@@ -60,12 +60,17 @@ std::string add_next_rules_MCS(){
     // CS:
     // i < m:
     next_rules += TRUTH_VALUE_PREDICATE_CS + "(F,S1,T):-" + IS_NEXT + "(F,G)," + IS_STATE + "(S1),tv(T),S2=S1+1,S1<M," + FINAL_STATE + "(M)," + TRUTH_VALUE_PREDICATE_CS + "(G,S2,T).";
+    // explicit version of the above rule:
+    // next_rules += TRUTH_VALUE_PREDICATE_CS + "(F,S1," + TRUTH_VALUE_F + "):-" + IS_NEXT + "(F,G)," + IS_STATE + "(S1),S2=S1+1,S1<M," + FINAL_STATE + "(M)," + TRUTH_VALUE_PREDICATE_CS + "(G,S2," + TRUTH_VALUE_F + ").";
+    // next_rules += TRUTH_VALUE_PREDICATE_CS + "(F,S1," + TRUTH_VALUE_T + "):-" + IS_NEXT + "(F,G)," + IS_STATE + "(S1),S2=S1+1,S1<M," + FINAL_STATE + "(M)," + TRUTH_VALUE_PREDICATE_CS + "(G,S2," + TRUTH_VALUE_T + ").";
     // i >= m:
     next_rules += TRUTH_VALUE_PREDICATE_CS + "(F,S," + TRUTH_VALUE_F + "):-" + IS_NEXT + "(F,_)," + IS_STATE + "(S),S>=M," + FINAL_STATE + "(M).";
 
     // Superset:
     // i < m:
     next_rules += TRUTH_VALUE_PREDICATE_SET + "(F,Su,S1,T):-" + IS_NEXT + "(F,G)," + IS_STATE + "(S1),tv(T),S2=S1+1,S1<M," + FINAL_STATE + "(M)," + TRUTH_VALUE_PREDICATE_SET + "(G,Su,S2,T)," + IS_SUPERSET + "(Su).";
+    // next_rules += TRUTH_VALUE_PREDICATE_SET + "(F,Su,S1," + TRUTH_VALUE_T + "):-" + IS_NEXT + "(F,G)," + IS_STATE + "(S1),S2=S1+1,S1<M," + FINAL_STATE + "(M)," + TRUTH_VALUE_PREDICATE_SET + "(G,Su,S2," + TRUTH_VALUE_T + ")," + IS_SUPERSET + "(Su).";
+    // next_rules += TRUTH_VALUE_PREDICATE_SET + "(F,Su,S1," + TRUTH_VALUE_F + "):-" + IS_NEXT + "(F,G)," + IS_STATE + "(S1),S2=S1+1,S1<M," + FINAL_STATE + "(M)," + TRUTH_VALUE_PREDICATE_SET + "(G,Su,S2," + TRUTH_VALUE_F + ")," + IS_SUPERSET + "(Su).";
     // i >= m:
     next_rules += TRUTH_VALUE_PREDICATE_SET + "(F,Su,S," + TRUTH_VALUE_F + "):-" + IS_NEXT + "(F,_)," + IS_STATE + "(S),S>=M," + FINAL_STATE + "(M)," + IS_SUPERSET + "(Su).";
 
@@ -76,29 +81,53 @@ std::string add_until_rules_MCS(){
     std::string until_rules = "";
     // CS:
     // T:
-    until_rules += TRUTH_VALUE_PREDICATE_CS + "(F,S1," + TRUTH_VALUE_T + "):-" + IS_UNTIL + "(F,G,H)," + IS_STATE + "(S1)," + TRUTH_VALUE_PREDICATE_CS + "(G,S1," + TRUTH_VALUE_T + ")," + TRUTH_VALUE_PREDICATE_CS + "(H,S1," + TRUTH_VALUE_T + ").";
+    until_rules += TRUTH_VALUE_PREDICATE_CS + "(F,S1," + TRUTH_VALUE_T + "):-" + IS_UNTIL + "(F,G,H)," + IS_STATE + "(S1)," + TRUTH_VALUE_PREDICATE_CS
+        + "(G,S1," + TRUTH_VALUE_T + ")," + TRUTH_VALUE_PREDICATE_CS + "(H,S1," + TRUTH_VALUE_T + ").";
 
-    until_rules += TRUTH_VALUE_PREDICATE_CS + "(F,S1," + TRUTH_VALUE_T + "):-" + IS_UNTIL + "(F,G,H)," + IS_STATE + "(S1)," + IS_STATE + "(S2),S2>S1,S2<=M," + FINAL_STATE + "(M),X{"
-        + TRUTH_VALUE_PREDICATE_CS + "(G,S," + TRUTH_VALUE_T + "):" + IS_STATE + "(S),S>=S1,S<S2}X,X=S2-S1," + TRUTH_VALUE_PREDICATE_CS + "(H,S2," + TRUTH_VALUE_T + ").";
+    until_rules += TRUTH_VALUE_PREDICATE_CS + "(F,S1," + TRUTH_VALUE_T + "):-" + IS_UNTIL + "(F,G,H)," + IS_STATE + "(S1)," + IS_STATE + "(S2),S2>S1,S2<=M," + FINAL_STATE
+        + "(M),X{" + TRUTH_VALUE_PREDICATE_CS + "(G,S," + TRUTH_VALUE_T + "):" + IS_STATE + "(S),S>=S1,S<S2}X,X=S2-S1," + TRUTH_VALUE_PREDICATE_CS
+        + "(H,S2," + TRUTH_VALUE_T + ").";
 
     // F:
-    until_rules += TRUTH_VALUE_PREDICATE_CS + "(F,S1," + TRUTH_VALUE_F + "):-" + IS_UNTIL + "(F,G,H)," + IS_STATE  + "(S1),X{" + TRUTH_VALUE_PREDICATE_CS + "(H,S," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>=S1}X," + FINAL_STATE + "(M),X=M-S1+1.";
+    until_rules += TRUTH_VALUE_PREDICATE_CS + "(F,S1," + TRUTH_VALUE_F + "):-" + IS_UNTIL + "(F,_,H)," + IS_STATE  + "(S1),X{" + TRUTH_VALUE_PREDICATE_CS
+        + "(H,S," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>=S1,S<=M}X," + FINAL_STATE + "(M),X=M-S1+1.";
 
-    until_rules += TRUTH_VALUE_PREDICATE_CS + "(F,S1," + TRUTH_VALUE_F + "):-" + IS_UNTIL + "(F,G,H)," + IS_STATE  + "(S1)," + IS_STATE  + "(S2)," + TRUTH_VALUE_PREDICATE_CS + "(H,S2," + TRUTH_VALUE_T + "),S2>S1,S2<=M," + FINAL_STATE + "(M),1{"
-        + TRUTH_VALUE_PREDICATE_CS + "(G,S," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>=S1,S<S2}.";
+    // until_rules += TRUTH_VALUE_PREDICATE_CS + "(F,S1," + TRUTH_VALUE_F + "):-" + IS_UNTIL + "(F,G,H)," + IS_STATE  + "(S1)," + IS_STATE  + "(S2),"
+    //     + TRUTH_VALUE_PREDICATE_CS + "(H,S2," + TRUTH_VALUE_T + "),S2>S1,S2<=M," + FINAL_STATE + "(M),1{"
+    //     + TRUTH_VALUE_PREDICATE_CS + "(G,S," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>=S1,S<S2}.";
+    until_rules += TRUTH_VALUE_PREDICATE_CS + "(F,S1," + TRUTH_VALUE_F + "):-" + IS_UNTIL + "(F,G,H)," + IS_STATE  + "(S1)," + IS_STATE  + "(S2),"
+        + TRUTH_VALUE_PREDICATE_CS + "(H,S2," + TRUTH_VALUE_T + "),S2>S1,S2<=M," + FINAL_STATE + "(M),1{"
+        + TRUTH_VALUE_PREDICATE_CS + "(G,S," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>=S1,S<S2},not " + TRUTH_VALUE_PREDICATE_CS + "(H,S3," + TRUTH_VALUE_T + "),S3<S2,"
+        + IS_STATE + "(S3).";
+
+    // phi1 must not be false in t_i:
+    until_rules += TRUTH_VALUE_PREDICATE_CS + "(F,S1," + TRUTH_VALUE_F + "):-" + IS_UNTIL + "(F,G,_)," + IS_STATE  + "(S1)," + TRUTH_VALUE_PREDICATE_CS
+        + "(G,S1," + TRUTH_VALUE_F + ").";
 
     // Superset:
     // T:
-    until_rules += TRUTH_VALUE_PREDICATE_SET + "(F,Su,S1," + TRUTH_VALUE_T + "):-" + IS_UNTIL + "(F,G,H)," + IS_STATE + "(S1)," + TRUTH_VALUE_PREDICATE_SET + "(G,Su,S1," + TRUTH_VALUE_T + ")," + TRUTH_VALUE_PREDICATE_SET + "(H,Su,S1," + TRUTH_VALUE_T + ")," + IS_SUPERSET + "(Su).";
+    until_rules += TRUTH_VALUE_PREDICATE_SET + "(F,Su,S1," + TRUTH_VALUE_T + "):-" + IS_UNTIL + "(F,G,H)," + IS_STATE + "(S1)," + TRUTH_VALUE_PREDICATE_SET
+        + "(G,Su,S1," + TRUTH_VALUE_T + ")," + TRUTH_VALUE_PREDICATE_SET + "(H,Su,S1," + TRUTH_VALUE_T + ")," + IS_SUPERSET + "(Su).";
 
-    until_rules += TRUTH_VALUE_PREDICATE_SET + "(F,Su,S1," + TRUTH_VALUE_T + "):-" + IS_UNTIL + "(F,G,H)," + IS_STATE + "(S1)," + IS_STATE + "(S2),S2>S1,S2<=M," + FINAL_STATE + "(M),X{"
-        + TRUTH_VALUE_PREDICATE_SET + "(G,Su,S," + TRUTH_VALUE_T + "):" + IS_STATE + "(S),S>=S1,S<S2}X,X=S2-S1," + TRUTH_VALUE_PREDICATE_SET + "(H,Su,S2," + TRUTH_VALUE_T + ")," + IS_SUPERSET + "(Su).";
+    until_rules += TRUTH_VALUE_PREDICATE_SET + "(F,Su,S1," + TRUTH_VALUE_T + "):-" + IS_UNTIL + "(F,G,H)," + IS_STATE + "(S1)," + IS_STATE + "(S2),S2>S1,S2<=M,"
+        + FINAL_STATE + "(M),X{" + TRUTH_VALUE_PREDICATE_SET + "(G,Su,S," + TRUTH_VALUE_T + "):" + IS_STATE + "(S),S>=S1,S<S2}X,X=S2-S1,"
+        + TRUTH_VALUE_PREDICATE_SET + "(H,Su,S2," + TRUTH_VALUE_T + ")," + IS_SUPERSET + "(Su).";
 
     // F:
-    until_rules += TRUTH_VALUE_PREDICATE_SET + "(F,Su,S1," + TRUTH_VALUE_F + "):-" + IS_UNTIL + "(F,G,H)," + IS_STATE  + "(S1),X{" + TRUTH_VALUE_PREDICATE_SET + "(H,Su,S," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>=S1}X," + FINAL_STATE + "(M),X=M-S1+1," + IS_SUPERSET + "(Su).";
+    until_rules += TRUTH_VALUE_PREDICATE_SET + "(F,Su,S1," + TRUTH_VALUE_F + "):-" + IS_UNTIL + "(F,_,H)," + IS_STATE  + "(S1),X{" + TRUTH_VALUE_PREDICATE_SET
+        + "(H,Su,S," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>=S1,S<=M}X," + FINAL_STATE + "(M),X=M-S1+1," + IS_SUPERSET + "(Su).";
 
-    until_rules += TRUTH_VALUE_PREDICATE_SET + "(F,Su,S1," + TRUTH_VALUE_F + "):-" + IS_UNTIL + "(F,G,H)," + IS_STATE  + "(S1)," + IS_STATE  + "(S2)," + TRUTH_VALUE_PREDICATE_SET + "(H,Su,S2," + TRUTH_VALUE_T + "),S2>S1,S2<=M," + FINAL_STATE + "(M),1{"
-        + TRUTH_VALUE_PREDICATE_SET + "(G,Su,S," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>=S1,S<S2}," + IS_SUPERSET + "(Su).";
+    // until_rules += TRUTH_VALUE_PREDICATE_SET + "(F,Su,S1," + TRUTH_VALUE_F + "):-" + IS_UNTIL + "(F,G,H)," + IS_STATE  + "(S1)," + IS_STATE  + "(S2),"
+    //     + TRUTH_VALUE_PREDICATE_SET + "(H,Su,S2," + TRUTH_VALUE_T + "),S2>S1,S2<=M," + FINAL_STATE + "(M),1{"
+    //     + TRUTH_VALUE_PREDICATE_SET + "(G,Su,S," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>=S1,S<S2}," + IS_SUPERSET + "(Su).";
+    until_rules += TRUTH_VALUE_PREDICATE_SET + "(F,Su,S1," + TRUTH_VALUE_F + "):-" + IS_UNTIL + "(F,G,H)," + IS_STATE  + "(S1)," + IS_STATE  + "(S2),"
+        + TRUTH_VALUE_PREDICATE_SET + "(H,Su,S2," + TRUTH_VALUE_T + "),S2>S1,S2<=M," + FINAL_STATE + "(M),1{"
+        + TRUTH_VALUE_PREDICATE_SET + "(G,Su,S," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>=S1,S<S2}," + IS_SUPERSET + "(Su),not " + TRUTH_VALUE_PREDICATE_SET
+        + "(H,Su,S3," + TRUTH_VALUE_T + "),S3<S2," + IS_STATE + "(S3).";
+
+    // phi1 must not be false in t_i:
+    until_rules += TRUTH_VALUE_PREDICATE_SET + "(F,Su,S1," + TRUTH_VALUE_F + "):-" + IS_UNTIL + "(F,G,_)," + IS_STATE  + "(S1)," + TRUTH_VALUE_PREDICATE_SET
+        + "(G,Su,S1," + TRUTH_VALUE_F + ")," + IS_SUPERSET + "(Su).";
 
     return until_rules;
 }
@@ -107,15 +136,19 @@ std::string add_globally_rules_MCS(){
     std::string gobally_rules = "";
     // CS:
     // T:
-    gobally_rules += TRUTH_VALUE_PREDICATE_CS + "(F,S1," + TRUTH_VALUE_T + "):-" + IS_GLOBALLY + "(F,G)," + IS_STATE + "(S1),X{" + TRUTH_VALUE_PREDICATE_CS + "(G,S," + TRUTH_VALUE_T + "):" + IS_STATE + "(S),S>=S1}X," + FINAL_STATE + "(M),X=M-S1+1.";
+    gobally_rules += TRUTH_VALUE_PREDICATE_CS + "(F,S1," + TRUTH_VALUE_T + "):-" + IS_GLOBALLY + "(F,G)," + IS_STATE + "(S1),X{" + TRUTH_VALUE_PREDICATE_CS
+        + "(G,S," + TRUTH_VALUE_T + "):" + IS_STATE + "(S),S>=S1}X," + FINAL_STATE + "(M),X=M-S1+1.";
     // F:
-    gobally_rules += TRUTH_VALUE_PREDICATE_CS + "(F,S1," + TRUTH_VALUE_F + "):-" + IS_GLOBALLY + "(F,G)," + IS_STATE + "(S1),1{" + TRUTH_VALUE_PREDICATE_CS + "(G,S," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>=S1}.";
+    gobally_rules += TRUTH_VALUE_PREDICATE_CS + "(F,S1," + TRUTH_VALUE_F + "):-" + IS_GLOBALLY + "(F,G)," + IS_STATE + "(S1),1{" + TRUTH_VALUE_PREDICATE_CS
+        + "(G,S," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>=S1}.";
 
     // Superset:
     // T:
-    gobally_rules += TRUTH_VALUE_PREDICATE_SET + "(F,Su,S1," + TRUTH_VALUE_T + "):-" + IS_GLOBALLY + "(F,G)," + IS_STATE + "(S1),X{" + TRUTH_VALUE_PREDICATE_SET + "(G,Su,S," + TRUTH_VALUE_T + "):" + IS_STATE + "(S),S>=S1}X," + FINAL_STATE + "(M),X=M-S1+1," + IS_SUPERSET + "(Su).";
+    gobally_rules += TRUTH_VALUE_PREDICATE_SET + "(F,Su,S1," + TRUTH_VALUE_T + "):-" + IS_GLOBALLY + "(F,G)," + IS_STATE + "(S1),X{" + TRUTH_VALUE_PREDICATE_SET
+        + "(G,Su,S," + TRUTH_VALUE_T + "):" + IS_STATE + "(S),S>=S1}X," + FINAL_STATE + "(M),X=M-S1+1," + IS_SUPERSET + "(Su).";
     // F:
-    gobally_rules += TRUTH_VALUE_PREDICATE_SET + "(F,Su,S1," + TRUTH_VALUE_F + "):-" + IS_GLOBALLY + "(F,G)," + IS_STATE + "(S1),1{" + TRUTH_VALUE_PREDICATE_SET + "(G,Su,S," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>=S1}," + IS_SUPERSET + "(Su).";
+    gobally_rules += TRUTH_VALUE_PREDICATE_SET + "(F,Su,S1," + TRUTH_VALUE_F + "):-" + IS_GLOBALLY + "(F,G)," + IS_STATE + "(S1),1{" + TRUTH_VALUE_PREDICATE_SET
+        + "(G,Su,S," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>=S1}," + IS_SUPERSET + "(Su).";
 
     return gobally_rules;
 }
@@ -124,22 +157,32 @@ std::string add_finally_rules_MCS(){
     std::string finally_rules = "";
     // CS:
     // T:
-    finally_rules += TRUTH_VALUE_PREDICATE_CS + "(F,S1," + TRUTH_VALUE_T + "):-" + IS_FINALLY + "(F,G)," + IS_STATE + "(S1)," + IS_STATE + "(S2)," + TRUTH_VALUE_PREDICATE_CS + "(G,S2," + TRUTH_VALUE_T + "),S2>=S1.";
+    // finally_rules += TRUTH_VALUE_PREDICATE_CS + "(F,S1," + TRUTH_VALUE_T + "):-" + IS_FINALLY + "(F,G)," + IS_STATE + "(S1)," + IS_STATE + "(S2)," + TRUTH_VALUE_PREDICATE_CS
+    //     + "(G,S2," + TRUTH_VALUE_T + "),S2>=S1.";
+    finally_rules += TRUTH_VALUE_PREDICATE_CS + "(F,S1," + TRUTH_VALUE_T + "):-" + IS_FINALLY + "(F,G)," + IS_STATE + "(S1),1{" + TRUTH_VALUE_PREDICATE_CS
+        + "(G,S," + TRUTH_VALUE_T + "):" + IS_STATE + "(S),S>=S1}.";
+
     // F:
-    finally_rules += TRUTH_VALUE_PREDICATE_CS + "(F,S1," + TRUTH_VALUE_F + "):-" + IS_FINALLY + "(F,G)," + IS_STATE + "(S1),X{" + TRUTH_VALUE_PREDICATE_CS + "(G,S," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>=S1}X," + FINAL_STATE + "(M),X=M-S1+1.";
+    finally_rules += TRUTH_VALUE_PREDICATE_CS + "(F,S1," + TRUTH_VALUE_F + "):-" + IS_FINALLY + "(F,G)," + IS_STATE + "(S1),X{" + TRUTH_VALUE_PREDICATE_CS
+        + "(G,S," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>=S1}X," + FINAL_STATE + "(M),X=M-S1+1.";
 
     // Superset:
     // T:
-    finally_rules += TRUTH_VALUE_PREDICATE_SET + "(F,Su,S1," + TRUTH_VALUE_T + "):-" + IS_FINALLY + "(F,G)," + IS_STATE + "(S1)," + IS_STATE + "(S2)," + TRUTH_VALUE_PREDICATE_SET + "(G,Su,S2," + TRUTH_VALUE_T + "),S2>=S1," + IS_SUPERSET + "(Su).";
+    // finally_rules += TRUTH_VALUE_PREDICATE_SET + "(F,Su,S1," + TRUTH_VALUE_T + "):-" + IS_FINALLY + "(F,G)," + IS_STATE + "(S1)," + IS_STATE + "(S2),"
+    //     + TRUTH_VALUE_PREDICATE_SET + "(G,Su,S2," + TRUTH_VALUE_T + "),S2>=S1," + IS_SUPERSET + "(Su).";
+    finally_rules += TRUTH_VALUE_PREDICATE_SET + "(F,Su,S1," + TRUTH_VALUE_T + "):-" + IS_FINALLY + "(F,G)," + IS_STATE + "(S1),1{" + TRUTH_VALUE_PREDICATE_SET
+        + "(G,Su,S," + TRUTH_VALUE_T + "):" + IS_STATE + "(S),S>=S1}," + IS_SUPERSET + "(Su).";
+
     // F:
-    finally_rules += TRUTH_VALUE_PREDICATE_SET + "(F,Su,S1," + TRUTH_VALUE_F + "):-" + IS_FINALLY + "(F,G)," + IS_STATE + "(S1),X{" + TRUTH_VALUE_PREDICATE_SET + "(G,Su,S," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>=S1}X," + FINAL_STATE + "(M),X=M-S1+1," + IS_SUPERSET + "(Su).";
+    finally_rules += TRUTH_VALUE_PREDICATE_SET + "(F,Su,S1," + TRUTH_VALUE_F + "):-" + IS_FINALLY + "(F,G)," + IS_STATE + "(S1),X{" + TRUTH_VALUE_PREDICATE_SET
+        + "(G,Su,S," + TRUTH_VALUE_F + "):" + IS_STATE + "(S),S>=S1}X," + FINAL_STATE + "(M),X=M-S1+1," + IS_SUPERSET + "(Su).";
 
     return finally_rules;
 }
 
 std::string add_guess_candidate_set_rules_MCS(){
 
-    std::string guess_cs = "1{" + IN_CS + "(X):" + KB_MEMBER + "(X)}.";
+    std::string guess_cs = "{" + IN_CS + "(X):" + KB_MEMBER + "(X)}.";
 
     // Auxiliary predicate that tells whether a formula is NOT in the candidate set:
     guess_cs += NOT_IN_CS + "(F):-" + KB_MEMBER + "(F),not " + IN_CS + "(F).";
@@ -226,7 +269,7 @@ std::string create_MCS_base_program(Kb& kb, int m){
 
     // handle formulas consisting of individual atoms
     program += TRUTH_VALUE_PREDICATE_CS + "(F,S,T):-tv(T)," + FORMULA_IS_ATOM + "(F,A)," + TRUTH_VALUE_PREDICATE_CS + "(A,S,T)," + IS_STATE + "(S).";
-    
+
     program += TRUTH_VALUE_PREDICATE_SET + "(F,Su,S,T):-tv(T),"+ FORMULA_IS_ATOM + "(F,A)," + TRUTH_VALUE_PREDICATE_SET + "(A,Su,S,T)," + IS_STATE + "(S)," + IS_SUPERSET + "(Su).";
 
     // add connector rules:

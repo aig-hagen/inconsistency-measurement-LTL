@@ -90,14 +90,6 @@ void ltl_to_asp1(Formula& formula, std::string formula_name, std::string& rules)
         ltl_to_asp1(n_unt, formula_name, rules);
     }
 
-    if(formula.IsWeaknext()){
-        auto subformulas = formula.GetSubformulas();
-        Formula base_formula = Formula(*(subformulas.begin()));
-        Formula next = Formula(Type::NEXT, Formula(Type::NOT, base_formula));
-        Formula n_next = Formula(Type::NOT, next);
-        ltl_to_asp1(n_next, formula_name, rules);
-    }
-
     if(formula.IsEquivalence()){
         auto subformulas = formula.GetSubformulas();
         auto i = subformulas.begin();
@@ -114,6 +106,19 @@ void ltl_to_asp1(Formula& formula, std::string formula_name, std::string& rules)
         Formula base_formula = Formula(*(subformulas.begin()));
         std::string new_formula_name = formula_name + "_x";
         rules += IS_NEXT + "(" + formula_name + "," + new_formula_name + ").";
+        ltl_to_asp1(base_formula, new_formula_name, rules);
+    }
+
+    if(formula.IsWeaknext()){
+        // auto subformulas = formula.GetSubformulas();
+        // Formula base_formula = Formula(*(subformulas.begin()));
+        // Formula next = Formula(Type::NEXT, Formula(Type::NOT, base_formula));
+        // Formula n_next = Formula(Type::NOT, next);
+        // ltl_to_asp1(n_next, formula_name, rules);
+        auto subformulas = formula.GetSubformulas();
+        Formula base_formula = Formula(*(subformulas.begin()));
+        std::string new_formula_name = formula_name + "_wx";
+        rules += IS_WEAKNEXT + "(" + formula_name + "," + new_formula_name + ").";
         ltl_to_asp1(base_formula, new_formula_name, rules);
     }
 
@@ -208,6 +213,17 @@ std::string add_next_rules1(){
     return next_rules;
 }
 
+std::string add_weaknext_rules1(){
+    std::string wnext_rules = "";
+    // i < m:
+    wnext_rules += TRUTH_VALUE_PREDICATE + "(F,S1,T):-" + IS_WEAKNEXT + "(F,G)," + IS_STATE + "(S1),tv(T),S2=S1+1,S1<M," + FINAL_STATE + "(M)," + TRUTH_VALUE_PREDICATE + "(G,S2,T).";
+    // i == m:
+    wnext_rules += TRUTH_VALUE_PREDICATE + "(F,S,T):-" + IS_WEAKNEXT + "(F,G)," + IS_STATE + "(S),S==M," + FINAL_STATE + "(M)," + TRUTH_VALUE_PREDICATE + "(G,S1,T).";;
+    // i > m:
+    wnext_rules += TRUTH_VALUE_PREDICATE + "(F,S," + TRUTH_VALUE_F + "):-" + IS_WEAKNEXT + "(F,_)," + IS_STATE + "(S),S>M," + FINAL_STATE + "(M).";
+    return wnext_rules;
+}
+
 std::string add_until_rules1(){
     std::string until_rules = "";
     // T:
@@ -294,6 +310,8 @@ std::string get_base_program_LTL1(Kb& kb){
         program += add_globally_rules1();
     if(program.find(IS_FINALLY) != std::string::npos)
         program += add_finally_rules1();
+    if(program.find(IS_WEAKNEXT) != std::string::npos)
+        program += add_weaknext_rules1();
 
     return program;
 }
@@ -357,6 +375,8 @@ int drastic_measure_LTL(Kb& kb, int m){
         program += AFFECTED_STATE + "(S):-" + IS_STATE + "(S)," + TRUTH_VALUE_PREDICATE + "(A,S," + TRUTH_VALUE_B + ")," + ATOM + "(A).";
 
         program += "#minimize{1,S:" + AFFECTED_STATE + "(S)}.";
+
+        // std::cout << program << std::endl;
 
         // let Clingo solve the problem; retrieve optimum:
         int opt = compute_optimum_with_inf(program);

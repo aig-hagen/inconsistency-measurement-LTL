@@ -37,6 +37,8 @@ namespace constants {
     static const std::string SUM_B = "sumB";
     static const std::string AFFECTED_STATE = "as";
 
+    static const std::string IS_WEAKNEXT = "weakx"; 
+
     // new constants unique to "mv-mis", "mv-mcs", "p-mis", "p-mcs", "r", "mi"
 
     static const std::string ATOM_IN_FORMULA = "aInF";

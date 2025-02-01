@@ -24,6 +24,7 @@ std::set<std::string> getFormulasInMCS(std::string& program){
     std::set<std::string> atom_list;
 
     if(m){
+        // std::cout << m << std::endl;
         for (auto atom : m.symbols()){
             if (atom.match("notInCS",1)){
                 for(auto arg : atom.arguments()){
@@ -91,12 +92,15 @@ double p_measure_LTL_MCS(Kb& kb, int m){
         for (int i = 0; i < kb.size(); i++){
             std::string formula_name = FORMULA_PREFIX + std::to_string(i);
             remaining_formulas.insert(formula_name);
+            // std::cout << formula_name << std::endl;
         }
 
         std::string program = create_MCS_base_program(kb,m);
 
         program += "validCS:-1{" + NOT_IN_CS + "(F):" + QUERY_FORMULA + "(F)}.";
         program += ":-not validCS.";
+
+        // std::cout << program << std::endl << std::endl;
 
         while(!remaining_formulas.empty()){
 
@@ -106,15 +110,19 @@ double p_measure_LTL_MCS(Kb& kb, int m){
             for(auto f: remaining_formulas){
                 std::string query_formula = QUERY_FORMULA + "(" + f + ").";
                 all_query_formulas += query_formula;
+                // std::cout << query_formula << std::endl;
             }
+            // std::cout << std::endl;
 
             std::string curr_program = program + all_query_formulas;
+            // std::cout << curr_program << std::endl << std::endl;
 
             // check if an answer set exists (via Clingo)
             // and check which formulas are included in the MCS found
             std::set<std::string> formulas_in_curr_MCS = getFormulasInMCS(curr_program);
 
             if (formulas_in_curr_MCS.empty()){
+                // std::cout << "I'm empty :(" << std::endl << std::endl;
                 break;
             }
 
@@ -230,4 +238,3 @@ int r_measure_LTL(Kb& kb, int m){
     }
 
 }
-

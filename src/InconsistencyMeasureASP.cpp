@@ -101,7 +101,8 @@ int compute_optimum_with_inf(std::string& program){
         while(sh.next()){
             Clingo::Model next_m = sh.model();
             if(next_m.cost().at(0) < min_val)
-                min_val = m.cost().at(0);
+                min_val = next_m.cost().at(0);
+                // std::cout << next_m << std::endl;
         }
 
         return min_val;
